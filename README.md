@@ -55,6 +55,8 @@ Then open <http://localhost:5173>.
 | `DEPLOY_USER` | The SSH login the deploy key belongs to |
 | `DEPLOY_KNOWN_HOSTS` | The droplet's pinned SSH host key line, so the workflow only connects to the real server |
 
+**Every pull request is built first.** `.github/workflows/build.yml` runs `npm ci` and `npm run build` on each pull request, including Dependabot's, without deploying or touching any secrets. `.github/dependabot.yml` opens weekly update pull requests for npm packages and GitHub Actions, grouping minor and patch updates. Both workflows pin their actions to exact commits, which Dependabot keeps current. Merge a pull request only after its build passes, since merging to `main` deploys.
+
 `npm run deploy` uploads whatever is on your machine, including uncommitted changes, and overwrites what GitHub deployed. Keep it as a manual fallback for when the workflow can't run. It reads `DEPLOY_USER` and `DEPLOY_HOST` from the environment or from a `deploy.env.local` file in the project root, which git ignores:
 
 ```bash
@@ -100,7 +102,7 @@ src/assets/games/tears-of-the-kingdom.webp
 ## Fonts
 
 - **Headings:** [Hylia Serif](https://artsyomni.com/hyliaserif) (Beta v0.009) by Omni Jacala of Artsy Omni. It's preloaded, with Georgia as the fallback.
-- **Body text:** [Inter](https://fonts.google.com/specimen/Inter).
+- **Body text:** [Inter](https://rsms.me/inter/), self-hosted through the [`@fontsource/inter`](https://fontsource.org/fonts/inter) package (SIL Open Font License), so the page makes no requests to Google or any other third party.
 
 Hylia Serif is free to use and download from its [official site](https://artsyomni.com/hyliaserif), and may not be distributed for profit. It's included in `public/fonts/` for convenience; the official site has the latest version. Hylia Serif is a fan-made approximation of the font from *Breath of the Wild* and is not affiliated with Nintendo.
 
