@@ -20,6 +20,10 @@ const customSrc = computed(() => {
   return match?.[1]
 })
 
+// The build-time prerender leaves the artwork out to keep the HTML small; it draws a gradient
+// placeholder of the same size, and the live app draws the scene when it takes over.
+const isPrerender = import.meta.env.SSR
+
 const slug = props.game.slug
 const id = (name) => `scene-${slug}-${name}`
 const url = (name) => `url(#${id(name)})`
@@ -130,7 +134,14 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
 </script>
 
 <template>
-  <v-img v-if="customSrc" :src="customSrc" :alt="game.title" aspect-ratio="16/9" cover />
+  <div
+    v-if="isPrerender"
+    class="emblem"
+    role="img"
+    :aria-label="`Illustration for ${game.title}`"
+    :style="{ background: `linear-gradient(${colors.background}, ${colors.glow})` }"
+  />
+  <v-img v-else-if="customSrc" :src="customSrc" :alt="game.title" aspect-ratio="16/9" cover />
   <svg v-else class="emblem" viewBox="0 0 400 225" role="img" :aria-label="`Illustration for ${game.title}`">
     <defs>
       <linearGradient :id="id('sky')" x1="0" y1="0" x2="0" y2="1">

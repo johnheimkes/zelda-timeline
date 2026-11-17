@@ -340,6 +340,15 @@ body {
   gap: 14px;
 }
 
+/* The era dots are desktop-only. The app removes them below Vuetify's md breakpoint, but the
+   prerendered page is the desktop layout, so hide them by CSS until the app takes over.
+   This must come after the rule above to win. */
+@media (max-width: 839.98px) {
+  .era-nav {
+    display: none;
+  }
+}
+
 .era-nav__item {
   display: flex;
   align-items: center;

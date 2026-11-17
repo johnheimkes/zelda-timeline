@@ -19,15 +19,20 @@ const themes = Object.fromEntries(
   ]),
 )
 
-export default createVuetify({
-  // SVG icons from @mdi/js, imported per icon, instead of the full icon font.
-  icons: {
-    defaultSet: 'mdi',
-    aliases,
-    sets: { mdi },
-  },
-  theme: {
-    defaultTheme: eras[0].id,
-    themes,
-  },
-})
+// A factory, so the browser and the build-time prerender (which passes `ssr`) each get
+// their own instance.
+export default function createVuetifyInstance(options = {}) {
+  return createVuetify({
+    ...options,
+    // SVG icons from @mdi/js, imported per icon, instead of the full icon font.
+    icons: {
+      defaultSet: 'mdi',
+      aliases,
+      sets: { mdi },
+    },
+    theme: {
+      defaultTheme: eras[0].id,
+      themes,
+    },
+  })
+}

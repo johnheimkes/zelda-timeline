@@ -39,7 +39,7 @@ Then open <http://localhost:5173>.
 | Script | What it does |
 | --- | --- |
 | `npm run dev` | Starts the dev server |
-| `npm run build` | Builds the site into `dist/` |
+| `npm run build` | Builds the site into `dist/` and prerenders the page into `index.html`, so content shows before the JavaScript loads |
 | `npm run preview` | Serves the production build locally |
 | `npm run icons` | Re-renders the favicon PNGs and link-preview image (macOS only) |
 
@@ -54,6 +54,9 @@ The site's Apache configuration lives in `deploy/apache/`.
 ```
 src/
   App.vue                     Page layout, timeline, scroll-driven themes and background blur
+  app.js                      Creates the app for the browser and for the build-time prerender
+  main.js                     Browser entry: replaces the prerendered page with the live app
+  entry-server.js             Build-time render of the page (desktop layout)
   components/GameEmblem.vue   Illustrated scene shown on each game card
   components/StarField.vue    Twinkling star background
   components/RuneField.vue    Drifting ancient-tech patterns
@@ -61,6 +64,7 @@ src/
   plugins/vuetify.js          One Vuetify theme per era, plus SVG icons
   styles.css                  Fonts, transitions and layout styles
 public/                       Favicons, link-preview image and the Hylia Serif font
+scripts/prerender.mjs         Writes the build-time render into dist/index.html
 scripts/render-icons.mjs      Renders the favicon PNGs and link-preview image
 deploy/apache/                Apache configuration for the droplet
 ```
