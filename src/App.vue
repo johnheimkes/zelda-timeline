@@ -32,7 +32,8 @@ onMounted(() => {
     },
     { rootMargin: '-50% 0px -50% 0px' },
   )
-  sectionRefs.value.forEach((el) => observer.observe(el))
+  // Refs can briefly be null during a hot reload, so skip anything that isn't mounted.
+  sectionRefs.value.filter(Boolean).forEach((el) => observer.observe(el))
 
   // The root is the bottom half of the screen, so the hero stops intersecting it
   // once its bottom edge rises past the middle.
@@ -42,7 +43,7 @@ onMounted(() => {
     },
     { rootMargin: '-50% 0px 0px 0px' },
   )
-  heroObserver.observe(heroRef.value)
+  if (heroRef.value) heroObserver.observe(heroRef.value)
 })
 
 onBeforeUnmount(() => {
@@ -154,18 +155,31 @@ const branches = eras.slice(1, 4)
             <v-timeline-item
               v-for="(game, i) in era.games"
               :key="game.slug"
-              dot-color="primary"
+              :dot-color="game.type === 'event' ? 'secondary' : 'primary'"
               :fill-dot="true"
-              size="small"
+              :size="game.type === 'event' ? 'x-small' : 'small'"
             >
               <template v-if="mdAndUp" #opposite>
-                <div class="year" :class="i % 2 ? 'text-right' : 'text-left'">
+                <div v-if="game.type === 'event'" class="event-when" :class="i % 2 ? 'text-right' : 'text-left'">
+                  {{ game.when }}
+                </div>
+                <div v-else class="year" :class="i % 2 ? 'text-right' : 'text-left'">
                   <span class="text-secondary">{{ game.year }}</span>
                   <div class="platform">{{ game.platform }}</div>
                 </div>
               </template>
 
-              <v-card class="game-card" rounded="lg" elevation="8">
+              <!-- A story event between games: compact, no artwork. -->
+              <v-card v-if="game.type === 'event'" class="event-card" rounded="lg" variant="outlined">
+                <v-card-item>
+                  <div class="event-card__label text-secondary">Between games</div>
+                  <v-card-title class="event-card__title">{{ game.title }}</v-card-title>
+                  <v-card-subtitle v-if="!mdAndUp">{{ game.when }}</v-card-subtitle>
+                </v-card-item>
+                <v-card-text class="event-card__text">{{ game.summary }}</v-card-text>
+              </v-card>
+
+              <v-card v-else class="game-card" rounded="lg" elevation="8">
                 <GameEmblem :game="game" :colors="era.colors" />
                 <v-card-item>
                   <v-card-title class="game-card__title">{{ game.title }}</v-card-title>
@@ -180,7 +194,19 @@ const branches = eras.slice(1, 4)
 
           <!-- The split after Ocarina of Time. -->
           <div v-if="era.id === 'myth'" class="split">
-            <v-icon icon="mdi-source-branch" size="40" color="secondary" />
+            <!-- The site's three-way branch mark (same as the favicon), one color per branch. -->
+            <svg class="split__icon" viewBox="0 0 64 64" aria-hidden="true">
+              <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M32 36 C32 26 16 26 16 14" stroke="#7bd36a" />
+                <path d="M32 36 V12" stroke="#b48cf2" />
+                <path d="M32 36 C32 26 48 26 48 14" stroke="#4fc3f7" />
+                <path d="M32 58 V36" stroke="#f0cc6b" />
+              </g>
+              <circle cx="16" cy="12" r="4.5" fill="#7bd36a" />
+              <circle cx="32" cy="10" r="4.5" fill="#b48cf2" />
+              <circle cx="48" cy="12" r="4.5" fill="#4fc3f7" />
+              <circle cx="32" cy="36" r="5" fill="#f0cc6b" />
+            </svg>
             <h3 class="split__title">The timeline splits into three</h3>
             <p class="split__hint">Choose a path to follow its story</p>
             <v-row class="mt-2" justify="center">
