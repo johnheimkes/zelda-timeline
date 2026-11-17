@@ -46,9 +46,21 @@ Then open <http://localhost:5173>.
 
 ## Deploying
 
-**Every push to `main` deploys automatically.** The GitHub Actions workflow in `.github/workflows/deploy.yml` builds the site on Node 24 and syncs it to `/var/www/zelda-timeline` on the droplet. It uses a dedicated deploy key, stored as the `DEPLOY_SSH_KEY` repository secret, that the droplet restricts to that folder with `rrsync`.
+**Every push to `main` deploys automatically.** The GitHub Actions workflow in `.github/workflows/deploy.yml` builds the site on Node 24 and syncs it to `/var/www/zelda-timeline` on the droplet. It reads these repository secrets:
 
-`npm run deploy` uploads whatever is on your machine, including uncommitted changes, and overwrites what GitHub deployed. Keep it as a manual fallback for when the workflow can't run.
+| Secret | Holds |
+| --- | --- |
+| `DEPLOY_SSH_KEY` | A dedicated deploy key that the droplet restricts to the site folder with `rrsync` |
+| `DEPLOY_HOST` | The droplet's address |
+| `DEPLOY_USER` | The SSH login the deploy key belongs to |
+| `DEPLOY_KNOWN_HOSTS` | The droplet's pinned SSH host key line, so the workflow only connects to the real server |
+
+`npm run deploy` uploads whatever is on your machine, including uncommitted changes, and overwrites what GitHub deployed. Keep it as a manual fallback for when the workflow can't run. It reads `DEPLOY_USER` and `DEPLOY_HOST` from the environment or from a `deploy.env.local` file in the project root, which git ignores:
+
+```bash
+DEPLOY_USER=your-login
+DEPLOY_HOST=your-server-address
+```
 
 The Apache configuration for the site lives in `deploy/apache/`:
 
