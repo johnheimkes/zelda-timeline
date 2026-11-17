@@ -1,0 +1,9 @@
+// Vuetify's Sass settings, read by vite-plugin-vuetify (see vite.config.js).
+// Its utility classes (spacing, display, typography and more, repeated for every breakpoint)
+// and its named color palette are turned off, cutting the stylesheet roughly in half. The few
+// utility classes the site uses are defined in styles.css. Theme color classes such as
+// bg-primary and text-secondary are unaffected: Vuetify generates them with the theme.
+@use 'vuetify/settings' with (
+  $utilities: false,
+  $color-pack: false
+);

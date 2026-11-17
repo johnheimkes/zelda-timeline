@@ -62,7 +62,8 @@ src/
   components/RuneField.vue    Drifting ancient-tech patterns
   data/timeline.js            Eras, palettes, games and between-game events
   plugins/vuetify.js          One Vuetify theme per era, plus SVG icons
-  styles.css                  Fonts, transitions and layout styles
+  styles.css                  Fonts, transitions, layout styles and the few utility classes used
+  styles/vuetify-settings.scss  Turns off Vuetify's unused utility classes and color palette
 public/                       Favicons, link-preview image and the Hylia Serif font
 scripts/prerender.mjs         Writes the build-time render into dist/index.html
 scripts/render-icons.mjs      Renders the favicon PNGs and link-preview image
@@ -85,7 +86,7 @@ src/assets/games/tears-of-the-kingdom.webp
 ## Fonts
 
 - **Headings:** [Hylia Serif](https://artsyomni.com/hyliaserif) (Beta v0.009) by Omni Jacala of Artsy Omni. It's preloaded, with Georgia as the fallback.
-- **Body text:** [Inter](https://rsms.me/inter/), self-hosted through the [`@fontsource/inter`](https://fontsource.org/fonts/inter) package (SIL Open Font License), so the page makes no requests to Google or any other third party.
+- **Body text:** [Inter](https://rsms.me/inter/), self-hosted through the [`@fontsource/inter`](https://fontsource.org/fonts/inter) package (SIL Open Font License), so the page makes no requests to Google or any other third party. Until it loads, text uses a local Arial-based fallback sized to Inter's measurements, so lines don't rewrap when Inter arrives.
 
 Hylia Serif is free to use and download from its [official site](https://artsyomni.com/hyliaserif), and may not be distributed for profit. It's included in `public/fonts/` for convenience; the official site has the latest version. Hylia Serif is a fan-made approximation of the font from *Breath of the Wild* and is not affiliated with Nintendo.
 

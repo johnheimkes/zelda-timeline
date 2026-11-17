@@ -6,9 +6,43 @@
   font-display: swap;
 }
 
+/* A local font sized to match Inter, used until Inter loads, so text keeps the same line breaks
+   and nothing shifts when Inter arrives. Arial, Liberation Sans and Arimo share the same metrics.
+   The values were measured against Inter itself (width ratio, ascent and descent). */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('Liberation Sans'), local('Arimo');
+  size-adjust: 106.37%;
+  ascent-override: 91.19%;
+  descent-override: 22.56%;
+  line-gap-override: 0%;
+}
+
 :root {
   --era-fade: 900ms ease;
   --font-display: 'Hylia Serif', Georgia, serif;
+  --font-body: 'Inter', 'Inter Fallback', system-ui, sans-serif;
+}
+
+/* Vuetify's utility classes are switched off (src/styles/vuetify-settings.scss). These are the
+   only ones the site uses, in Vuetify's own layer so they sit in the same place in the cascade. */
+@layer vuetify-utilities {
+  .text-center { text-align: center; }
+  .text-left { text-align: left; }
+  .text-right { text-align: right; }
+  .text-wrap { white-space: normal; }
+  .text-medium-emphasis {
+    color: color-mix(in srgb, rgb(var(--v-theme-on-background)) calc(var(--v-medium-emphasis-opacity) * 100%), transparent);
+  }
+  .justify-center { justify-content: center; }
+  .mt-2 { margin-top: 8px; }
+  .mt-4 { margin-top: 16px; }
+  .mt-6 { margin-top: 24px; }
+  .mr-2 { margin-right: 8px; }
+  .ml-2 { margin-left: 8px; }
+  .h-100 { height: 100%; }
+  .rounded-lg { border-radius: 8px; }
+  .rounded-pill { border-radius: 9999px; }
 }
 
 html,
@@ -17,7 +51,7 @@ body {
 }
 
 .v-application {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-body);
 }
 
 /* Theme swaps change Vuetify's CSS variables; these transitions make the swap a fade. */
@@ -167,7 +201,7 @@ body {
 }
 
 .platform {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.08em;
