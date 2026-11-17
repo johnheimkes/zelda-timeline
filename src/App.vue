@@ -1,0 +1,199 @@
+<script setup>
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useDisplay, useTheme } from 'vuetify'
+import GameEmblem from './components/GameEmblem.vue'
+import { eras, sideStories } from './data/timeline'
+
+const theme = useTheme()
+const { mdAndUp } = useDisplay()
+
+const activeEraId = ref(eras[0].id)
+const activeEra = computed(() => eras.find((e) => e.id === activeEraId.value))
+const sectionRefs = ref([])
+let observer
+
+// Switch the Vuetify theme to whichever era section crosses the middle of the screen.
+const setEra = (id) => {
+  if (id === activeEraId.value) return
+  activeEraId.value = id
+  theme.change(id)
+}
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.filter((e) => e.isIntersecting).forEach((e) => setEra(e.target.dataset.era))
+    },
+    { rootMargin: '-50% 0px -50% 0px' },
+  )
+  sectionRefs.value.forEach((el) => observer.observe(el))
+})
+
+onBeforeUnmount(() => observer?.disconnect())
+
+const scrollTo = (id) =>
+  document.getElementById(`era-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+const branches = eras.slice(1, 4)
+</script>
+
+<template>
+  <v-app>
+    <!-- One glow layer per era; they cross-fade as the active era changes. -->
+    <div class="ambient" aria-hidden="true">
+      <div
+        v-for="era in eras"
+        :key="era.id"
+        class="ambient__layer"
+        :class="{ 'ambient__layer--on': era.id === activeEraId }"
+        :style="{
+          background: `radial-gradient(ellipse at 20% 10%, ${era.colors.glow}55, transparent 55%),
+                       radial-gradient(ellipse at 85% 90%, ${era.colors.secondary}22, transparent 50%)`,
+        }"
+      />
+    </div>
+
+    <v-app-bar flat density="comfortable" class="app-bar">
+      <v-app-bar-title class="brand">Hyrule Chronicle</v-app-bar-title>
+      <template #append>
+        <v-chip
+          color="primary"
+          variant="tonal"
+          class="mr-2 era-chip"
+          prepend-icon="mdi-map-marker-path"
+        >
+          {{ activeEra.title }}
+        </v-chip>
+      </template>
+    </v-app-bar>
+
+    <!-- Era jump list, fixed on the right on wider screens. -->
+    <nav v-if="mdAndUp" class="era-nav" aria-label="Eras">
+      <button
+        v-for="era in eras"
+        :key="era.id"
+        class="era-nav__item"
+        :class="{ 'era-nav__item--on': era.id === activeEraId }"
+        :style="{ '--dot': era.colors.primary }"
+        @click="scrollTo(era.id)"
+      >
+        <span class="era-nav__label">{{ era.title }}</span>
+        <span class="era-nav__dot" />
+      </button>
+    </nav>
+
+    <v-main>
+      <section class="hero">
+        <v-container class="text-center">
+          <p class="eyebrow text-secondary">The official chronology</p>
+          <h1 class="hero__title">The Legend of Zelda<br />Timeline</h1>
+          <p class="hero__lede">
+            From the skies of Skyloft to the floating islands of Tears of the Kingdom. One story,
+            split into three after Ocarina of Time. Scroll to follow it from the beginning.
+          </p>
+          <v-btn
+            color="primary"
+            variant="tonal"
+            size="large"
+            append-icon="mdi-chevron-down"
+            class="mt-6"
+            @click="scrollTo(eras[0].id)"
+          >
+            Begin the journey
+          </v-btn>
+        </v-container>
+      </section>
+
+      <section
+        v-for="era in eras"
+        :id="`era-${era.id}`"
+        :key="era.id"
+        ref="sectionRefs"
+        :data-era="era.id"
+        class="era"
+      >
+        <v-container class="era__container">
+          <header class="era__header text-center">
+            <p class="eyebrow text-secondary">{{ era.subtitle }}</p>
+            <h2 class="era__title">{{ era.title }}</h2>
+            <p class="era__blurb">{{ era.blurb }}</p>
+          </header>
+
+          <v-timeline
+            :side="mdAndUp ? undefined : 'end'"
+            :align="mdAndUp ? 'center' : 'start'"
+            line-color="primary"
+            line-thickness="2"
+            truncate-line="both"
+          >
+            <v-timeline-item
+              v-for="(game, i) in era.games"
+              :key="game.slug"
+              dot-color="primary"
+              :fill-dot="true"
+              size="small"
+            >
+              <template v-if="mdAndUp" #opposite>
+                <div class="year" :class="i % 2 ? 'text-right' : 'text-left'">
+                  <span class="text-secondary">{{ game.year }}</span>
+                  <div class="platform">{{ game.platform }}</div>
+                </div>
+              </template>
+
+              <v-card class="game-card" rounded="lg" elevation="8">
+                <GameEmblem :game="game" :colors="era.colors" />
+                <v-card-item>
+                  <v-card-title class="game-card__title">{{ game.title }}</v-card-title>
+                  <v-card-subtitle v-if="!mdAndUp">
+                    {{ game.year }} · {{ game.platform }}
+                  </v-card-subtitle>
+                </v-card-item>
+                <v-card-text class="game-card__text">{{ game.summary }}</v-card-text>
+              </v-card>
+            </v-timeline-item>
+          </v-timeline>
+
+          <!-- The split after Ocarina of Time. -->
+          <div v-if="era.id === 'myth'" class="split">
+            <v-icon icon="mdi-source-branch" size="40" color="secondary" />
+            <h3 class="split__title">The timeline splits into three</h3>
+            <v-row class="mt-4" justify="center">
+              <v-col v-for="b in branches" :key="b.id" cols="12" sm="4">
+                <v-card
+                  variant="outlined"
+                  rounded="lg"
+                  class="split__card"
+                  :style="{ borderColor: b.colors.primary }"
+                  @click="scrollTo(b.id)"
+                >
+                  <v-card-title :style="{ color: b.colors.primary }">{{ b.title }}</v-card-title>
+                  <v-card-subtitle>{{ b.subtitle }}</v-card-subtitle>
+                </v-card>
+              </v-col>
+            </v-row>
+          </div>
+        </v-container>
+      </section>
+
+      <section class="coda">
+        <v-container class="text-center">
+          <p class="eyebrow text-secondary">Outside the main line</p>
+          <h2 class="era__title">Side stories</h2>
+          <v-row justify="center" class="mt-4">
+            <v-col v-for="s in sideStories" :key="s.title" cols="12" sm="6" md="5">
+              <v-card rounded="lg" variant="tonal" color="primary" class="h-100">
+                <v-card-title class="text-wrap">{{ s.title }}</v-card-title>
+                <v-card-subtitle>{{ s.year }}</v-card-subtitle>
+                <v-card-text class="text-medium-emphasis">{{ s.note }}</v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+          <p class="footnote">
+            A fan-made chronology based on Nintendo's published timeline. The Legend of Zelda is a
+            trademark of Nintendo; this site is not affiliated with or endorsed by Nintendo.
+          </p>
+        </v-container>
+      </section>
+    </v-main>
+  </v-app>
+</template>
