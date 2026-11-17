@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 // Original illustrated scene for each game, keyed by slug and tinted with its era palette.
 // To use your own picture instead, add src/assets/games/<slug>.(jpg|png|webp).
@@ -20,9 +20,31 @@ const customSrc = computed(() => {
   return match?.[1]
 })
 
-// The build-time prerender leaves the artwork out to keep the HTML small; it draws a gradient
-// placeholder of the same size, and the live app draws the scene when it takes over.
-const isPrerender = import.meta.env.SSR
+// Until a card nears the screen it shows a same-size gradient instead of its scene. That keeps
+// the prerendered HTML small and spares phones from drawing all 20 scenes on load. The
+// prerender never draws scenes, since onMounted doesn't run on the server.
+const frame = ref(null)
+const drawn = ref(false)
+let observer
+
+onMounted(() => {
+  if (!('IntersectionObserver' in window)) {
+    drawn.value = true
+    return
+  }
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return
+      drawn.value = true
+      observer.disconnect()
+    },
+    // Start drawing well before the card scrolls into view.
+    { rootMargin: '600px 0px' },
+  )
+  observer.observe(frame.value)
+})
+
+onBeforeUnmount(() => observer?.disconnect())
 
 const slug = props.game.slug
 const id = (name) => `scene-${slug}-${name}`
@@ -134,8 +156,9 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
 </script>
 
 <template>
+  <div ref="frame">
   <div
-    v-if="isPrerender"
+    v-if="!drawn"
     class="emblem"
     role="img"
     :aria-label="`Illustration for ${game.title}`"
@@ -780,6 +803,7 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
       </template>
     </g>
   </svg>
+  </div>
 </template>
 
 <style scoped>

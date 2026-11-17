@@ -143,7 +143,7 @@ const scrollToSplit = () => {
       <v-fade-transition>
         <v-btn
           v-if="inBranch"
-          class="quick-nav__btn"
+          class="quick-nav__btn quick-nav__btn--path"
           rounded="pill"
           variant="elevated"
           color="surface"
@@ -158,7 +158,7 @@ const scrollToSplit = () => {
       <v-fade-transition>
         <v-btn
           v-if="pastHero"
-          class="quick-nav__btn"
+          class="quick-nav__btn quick-nav__btn--top"
           :icon="mdiArrowUp"
           variant="elevated"
           color="surface"

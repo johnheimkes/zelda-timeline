@@ -233,15 +233,31 @@ body {
 }
 
 /* Floating "Choose a path" and "Back to top" buttons, bottom right. */
+/* Each button has a fixed spot, so one appearing or fading out never moves the other
+   (which would count as a layout shift). */
 .quick-nav {
   position: fixed;
   right: 20px;
   bottom: calc(20px + env(safe-area-inset-bottom));
   z-index: 6;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
+  /* A real width so the absolutely placed buttons size to their content; clicks pass through
+     the empty area to the page underneath. */
+  width: 260px;
+  pointer-events: none;
+}
+
+.quick-nav__btn {
+  position: absolute !important;
+  right: 0;
+  pointer-events: auto;
+}
+
+.quick-nav__btn--top {
+  bottom: 0;
+}
+
+.quick-nav__btn--path {
+  bottom: 58px;
 }
 
 .quick-nav__btn {
@@ -395,6 +411,13 @@ body {
   .era__container {
     padding-right: 120px;
   }
+}
+
+/* Wide enough for the longest era name, so the right-aligned chip keeps the same left edge as
+   the name changes; otherwise it would register as a layout shift. */
+.era-chip {
+  min-width: 11.5rem;
+  justify-content: center;
 }
 
 @media (max-width: 600px) {
