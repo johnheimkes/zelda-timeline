@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- One path splitting into three branches, colored like the site's eras. -->
+  <rect width="64" height="64" rx="14" fill="#0b1322" />
+  <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 36 C32 26 16 26 16 14" stroke="#7bd36a" />
+    <path d="M32 36 V12" stroke="#b48cf2" />
+    <path d="M32 36 C32 26 48 26 48 14" stroke="#4fc3f7" />
+    <path d="M32 56 V36" stroke="#f0cc6b" />
+  </g>
+  <circle cx="16" cy="12" r="5" fill="#7bd36a" />
+  <circle cx="32" cy="10" r="5" fill="#b48cf2" />
+  <circle cx="48" cy="12" r="5" fill="#4fc3f7" />
+  <circle cx="32" cy="36" r="5.5" fill="#f0cc6b" />
+</svg>
