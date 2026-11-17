@@ -2,10 +2,15 @@
 # Builds the site and uploads it to the droplet over SSH.
 set -euo pipefail
 
-HOST="${DEPLOY_HOST:-user@server}"
-DEST="${DEPLOY_PATH:-/var/www/zelda-timeline}"
-
 cd "$(dirname "$0")/.."
+
+# The server's login and address stay out of the public repo: set DEPLOY_USER and
+# DEPLOY_HOST in the environment, or in deploy.env.local (git ignores *.local files).
+[ -f deploy.env.local ] && source deploy.env.local
+: "${DEPLOY_USER:?Set DEPLOY_USER (in deploy.env.local or the environment)}"
+: "${DEPLOY_HOST:?Set DEPLOY_HOST (in deploy.env.local or the environment)}"
+HOST="$DEPLOY_USER@$DEPLOY_HOST"
+DEST="${DEPLOY_PATH:-/var/www/zelda-timeline}"
 
 # Build with the Node version pinned in .nvmrc.
 source "${NVM_DIR:-$HOME/.nvm}/nvm.sh"
