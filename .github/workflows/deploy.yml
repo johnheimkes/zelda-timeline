@@ -8,6 +8,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# The job only reads the repository; deploying uses the SSH key, not the GitHub token.
+permissions:
+  contents: read
+
 concurrency:
   group: deploy
   cancel-in-progress: false
