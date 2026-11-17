@@ -1,0 +1,22 @@
+# Weekly version updates. Minor and patch updates are grouped into one pull request per
+# ecosystem; major updates arrive separately so they can be checked on their own.
+# Each pull request is built by .github/workflows/build.yml before it can be merged,
+# and merging to main deploys.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions-minor-and-patch:
+        update-types: [minor, patch]
