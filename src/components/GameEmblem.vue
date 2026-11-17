@@ -111,14 +111,32 @@ const bunting = (y0, sag, n, colors) =>
     return { x: 400 * t, y: y0 + 4 * sag * t * (1 - t), color: colors[i % colors.length] }
   })
 
+// Spirit Tracks: two rails as quadratic curves from the foreground to the tower's base. The
+// route keeps both rails on the land the whole way (checked against the scene's hills), and the
+// ties and the train are placed from these same curves so everything stays on the track.
 const quad = (t, p0, c, p2) => (1 - t) ** 2 * p0 + 2 * (1 - t) * t * c + t ** 2 * p2
+const RAILS = [
+  [[40, 225], [170, 180], [296, 166]],
+  [[100, 225], [205, 184], [304, 168]],
+]
+const railPoint = (t, [p0, c, p2]) => [quad(t, p0[0], c[0], p2[0]), quad(t, p0[1], c[1], p2[1])]
+const railPaths = RAILS.map(([p0, c, p2]) => `M${p0[0]} ${p0[1]} Q${c[0]} ${c[1]} ${p2[0]} ${p2[1]}`).join(' ')
 const railTies = Array.from({ length: 16 }, (_, i) => {
   const t = 0.04 + i * 0.06
-  return {
-    d: `M${quad(t, 40, 180, 300).toFixed(1)} ${quad(t, 225, 160, 150).toFixed(1)} L${quad(t, 100, 210, 306).toFixed(1)} ${quad(t, 225, 168, 152).toFixed(1)}`,
-    w: 5 - t * 4,
-  }
+  const [a, b] = RAILS.map((rail) => railPoint(t, rail))
+  return { d: `M${a[0].toFixed(1)} ${a[1].toFixed(1)} L${b[0].toFixed(1)} ${b[1].toFixed(1)}`, w: 5 - t * 4 }
 })
+// The train sits on the centerline between the rails, turned to follow the track there.
+const trackCenter = (t) => {
+  const [a, b] = RAILS.map((rail) => railPoint(t, rail))
+  return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
+}
+const trainTransform = (() => {
+  const [x, y] = trackCenter(0.4)
+  const [x2, y2] = trackCenter(0.42)
+  const angle = (Math.atan2(y2 - y, x2 - x) * 180) / Math.PI
+  return `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${angle.toFixed(1)})`
+})()
 
 // 25 x 14 tile map for the retro overworld scene.
 const OVERWORLD = [
@@ -715,17 +733,18 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
           </linearGradient>
         </defs>
         <rect width="400" height="225" :fill="url('day')" />
-        <rect x="292" y="34" width="20" height="120" fill="#d8d0bf" />
+        <!-- The tower runs down behind the hill (drawn below), so it rises out of the land. -->
+        <rect x="292" y="34" width="20" height="138" fill="#d8d0bf" />
         <rect v-for="i in 5" :key="`band-${i}`" x="288" :y="40 + (i - 1) * 24" width="28" height="5" fill="#b8ae98" />
         <path d="M290 34 L302 16 L314 34 Z" fill="#b8ae98" />
         <circle cx="302" cy="14" r="8" :fill="colors.secondary" opacity="0.6" :filter="url('glow')" />
         <path :d="hills(152, 10, 60, 0.3)" fill="#4f8f5a" />
         <path :d="hills(178, 8, 40, 1.8)" fill="#3f7a4a" />
         <path v-for="(tie, i) in railTies" :key="`tie-${i}`" :d="tie.d" stroke="#6b4a2f" :stroke-width="tie.w" />
-        <path d="M40 225 Q180 160 300 150 M100 225 Q210 168 306 152" stroke="#9aa3ad" stroke-width="2.5" fill="none" />
+        <path :d="railPaths" stroke="#9aa3ad" stroke-width="2.5" fill="none" />
         <!-- The train sits on the track's centerline, angled to follow it toward the tower.
              Local coordinates: y = 0 is the track, +x points toward the tower. -->
-        <g transform="translate(167 184) rotate(-20)">
+        <g :transform="trainTransform">
           <circle v-for="(p, i) in [[16, -60, 8], [2, -74, 10], [-16, -90, 13], [-38, -104, 15]]" :key="`smoke-${i}`" :cx="p[0]" :cy="p[1]" :r="p[2]" fill="#fff" :opacity="0.8 - i * 0.16" />
           <rect x="-40" y="-42" width="26" height="36" rx="2" fill="#8a2a2a" />
           <rect x="-35" y="-36" width="16" height="11" rx="2" fill="#f6e2a8" />
