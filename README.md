@@ -2,11 +2,12 @@
 
 A single-page, fan-made guide to the official chronology of *The Legend of Zelda* series. Scroll from *Skyward Sword* to *Tears of the Kingdom* and follow the story as it splits into three branches after *Ocarina of Time*.
 
-Built with [Vue 3](https://vuejs.org/), [Vuetify 3](https://vuetifyjs.com/) and [Vite](https://vite.dev/).
+Live at <https://zelda.heimk.es>. Built with [Vue 3](https://vuejs.org/), [Vuetify 3](https://vuetifyjs.com/) and [Vite](https://vite.dev/).
 
 ## Features
 
 - **Vertical timeline** of every mainline game, each with a year, platform and short summary.
+- **Story events between games**, such as the Imprisoning War and the Great Flood, shown as smaller dashed cards with a "when" label.
 - **Era-based color themes.** The page fades between five dark palettes as you scroll:
 
   | Era | Palette |
@@ -17,8 +18,10 @@ Built with [Vue 3](https://vuejs.org/), [Vuetify 3](https://vuetifyjs.com/) and 
   | The Adult Timeline | Ocean blue and sand |
   | The Era of Wilds | Teal-green and gold |
 
-- **Timeline split section** after *Ocarina of Time*, linking to each branch.
+- **Animated background.** A twinkling star field with original ancient-tech patterns drifting up in front of it, tinted with the current era's color. Once you scroll past the title, the background blurs slightly and the drift pauses. Visitors who prefer reduced motion get a still background.
+- **Timeline split section** after *Ocarina of Time*, with a button for each branch (keyboard accessible).
 - **Era navigation** dots on the right edge for jumping between sections (desktop).
+- **Link previews** for Discord, iMessage and Slack, plus a favicon and iOS home-screen icon.
 - **Responsive layout** that collapses to a single-sided timeline on phones.
 
 ## Getting started
@@ -38,20 +41,38 @@ Then open <http://localhost:5173>.
 | `npm run dev` | Starts the dev server |
 | `npm run build` | Builds the site into `dist/` |
 | `npm run preview` | Serves the production build locally |
+| `npm run icons` | Re-renders the favicon PNGs and link-preview image (macOS only) |
+| `npm run deploy` | Builds and uploads the site from your machine (manual fallback, see below) |
+
+## Deploying
+
+**Every push to `main` deploys automatically.** The GitHub Actions workflow in `.github/workflows/deploy.yml` builds the site on Node 24 and syncs it to `/var/www/zelda-timeline` on the droplet. It uses a dedicated deploy key, stored as the `DEPLOY_SSH_KEY` repository secret, that the droplet restricts to that folder with `rrsync`.
+
+`npm run deploy` uploads whatever is on your machine, including uncommitted changes, and overwrites what GitHub deployed. Keep it as a manual fallback for when the workflow can't run.
+
+The Apache configuration for the site lives in `deploy/apache/`:
+
+- `zelda.heimk.es.conf` is the virtual host. certbot manages the matching HTTPS virtual host on the server.
+- `zelda-timeline-cache.conf` sets caching headers: a year for the hashed files in `/assets/`, a day for icons, images and fonts, and a fresh check for `index.html` so deploys show up right away.
 
 ## Project structure
 
 ```
 src/
-  App.vue                  Page layout, timeline and scroll-driven theme switching
-  components/GameEmblem.vue  Illustrated scene shown on each game card
-  data/timeline.js         Eras, color palettes and game summaries
-  plugins/vuetify.js       Builds one Vuetify theme per era
-  styles.css               Fonts, transitions and layout styles
-public/fonts/              Hylia Serif font file
+  App.vue                     Page layout, timeline, scroll-driven themes and background blur
+  components/GameEmblem.vue   Illustrated scene shown on each game card
+  components/StarField.vue    Twinkling star background
+  components/RuneField.vue    Drifting ancient-tech patterns
+  data/timeline.js            Eras, palettes, games and between-game events
+  plugins/vuetify.js          One Vuetify theme per era, plus SVG icons
+  styles.css                  Fonts, transitions and layout styles
+public/                       Favicons, link-preview image and the Hylia Serif font
+scripts/render-icons.mjs      Renders the favicon PNGs and link-preview image
+scripts/deploy.sh             Manual build-and-upload fallback
+deploy/apache/                Apache configuration for the droplet
 ```
 
-To add or edit a game, change `src/data/timeline.js`. Each era's `colors` object drives both its Vuetify theme and the background glow.
+To add or edit a game, change `src/data/timeline.js`. Each era's `colors` object drives both its Vuetify theme and the background glow. To add an event between games, insert an entry with `type: 'event'`, a `title`, a `when` label and a `summary` where it belongs in the list.
 
 ## Game artwork
 
@@ -66,7 +87,7 @@ src/assets/games/tears-of-the-kingdom.webp
 
 ## Fonts
 
-- **Headings:** [Hylia Serif](https://artsyomni.com/hyliaserif) (Beta v0.009) by Omni Jacala of Artsy Omni. Falls back to [Cinzel](https://fonts.google.com/specimen/Cinzel) while loading.
+- **Headings:** [Hylia Serif](https://artsyomni.com/hyliaserif) (Beta v0.009) by Omni Jacala of Artsy Omni. It's preloaded, with Georgia as the fallback.
 - **Body text:** [Inter](https://fonts.google.com/specimen/Inter).
 
 Hylia Serif is free to use and download from its [official site](https://artsyomni.com/hyliaserif), and may not be distributed for profit. It's included in `public/fonts/` for convenience; the official site has the latest version. Hylia Serif is a fan-made approximation of the font from *Breath of the Wild* and is not affiliated with Nintendo.

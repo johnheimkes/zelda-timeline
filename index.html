@@ -30,10 +30,12 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="The Legend of Zelda Timeline, with a path splitting into three colored branches" />
     <meta name="twitter:card" content="summary_large_image" />
+    <!-- Start loading the heading font early so headings rarely flash the fallback. -->
+    <link rel="preload" href="/fonts/HyliaSerifBeta-Regular.otf" as="font" type="font/otf" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
   </head>
