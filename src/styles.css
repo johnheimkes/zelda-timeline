@@ -1,5 +1,5 @@
 /* Hylia Serif (Beta v0.009) by Omni Jacala, free to use: https://artsyomni.com/hyliaserif
-   Cinzel is the fallback while it loads. */
+   index.html preloads it so headings rarely show the Georgia fallback. */
 @font-face {
   font-family: 'Hylia Serif';
   src: url('/fonts/HyliaSerifBeta-Regular.otf') format('opentype');
@@ -8,7 +8,7 @@
 
 :root {
   --era-fade: 900ms ease;
-  --font-display: 'Hylia Serif', 'Cinzel', Georgia, serif;
+  --font-display: 'Hylia Serif', Georgia, serif;
 }
 
 html,
@@ -196,8 +196,7 @@ body {
 .event-card {
   max-width: 400px;
   border: 1px dashed rgba(var(--v-theme-secondary), 0.45) !important;
-  background: rgba(var(--v-theme-surface), 0.55) !important;
-  backdrop-filter: blur(2px);
+  background: rgba(var(--v-theme-surface), 0.7) !important;
 }
 
 .event-card__label {
@@ -273,8 +272,14 @@ body {
   white-space: normal;
 }
 
-.split__card:hover {
+.split__card:hover,
+.split__card:focus-visible {
   transform: translateY(-3px);
+}
+
+.split__card:focus-visible {
+  outline: 2px solid var(--branch);
+  outline-offset: 3px;
 }
 
 .split__card .v-card-title {

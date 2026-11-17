@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useDisplay, useTheme } from 'vuetify'
+import { mdiChevronDown, mdiMapMarkerPath } from '@mdi/js'
 import GameEmblem from './components/GameEmblem.vue'
 import RuneField from './components/RuneField.vue'
 import StarField from './components/StarField.vue'
@@ -86,7 +87,7 @@ const branches = eras.slice(1, 4)
           color="primary"
           variant="tonal"
           class="mr-2 era-chip"
-          prepend-icon="mdi-map-marker-path"
+          :prepend-icon="mdiMapMarkerPath"
         >
           {{ activeEra.title }}
         </v-chip>
@@ -121,7 +122,7 @@ const branches = eras.slice(1, 4)
             color="primary"
             variant="tonal"
             size="large"
-            append-icon="mdi-chevron-down"
+            :append-icon="mdiChevronDown"
             class="mt-6"
             @click="scrollTo(eras[0].id)"
           >
@@ -160,10 +161,10 @@ const branches = eras.slice(1, 4)
               :size="game.type === 'event' ? 'x-small' : 'small'"
             >
               <template v-if="mdAndUp" #opposite>
-                <div v-if="game.type === 'event'" class="event-when" :class="i % 2 ? 'text-right' : 'text-left'">
+                <div v-if="game.type === 'event'" class="event-when" :class="i % 2 ? 'text-left' : 'text-right'">
                   {{ game.when }}
                 </div>
-                <div v-else class="year" :class="i % 2 ? 'text-right' : 'text-left'">
+                <div v-else class="year" :class="i % 2 ? 'text-left' : 'text-right'">
                   <span class="text-secondary">{{ game.year }}</span>
                   <div class="platform">{{ game.platform }}</div>
                 </div>
@@ -215,8 +216,12 @@ const branches = eras.slice(1, 4)
                   variant="outlined"
                   rounded="lg"
                   class="split__card"
-                  :style="{ borderColor: b.colors.primary }"
+                  role="button"
+                  tabindex="0"
+                  :style="{ borderColor: b.colors.primary, '--branch': b.colors.primary }"
                   @click="scrollTo(b.id)"
+                  @keydown.enter.prevent="scrollTo(b.id)"
+                  @keydown.space.prevent="scrollTo(b.id)"
                 >
                   <v-card-title :style="{ color: b.colors.primary }">{{ b.title }}</v-card-title>
                   <v-card-subtitle>{{ b.subtitle }}</v-card-subtitle>

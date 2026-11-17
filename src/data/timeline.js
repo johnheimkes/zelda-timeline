@@ -74,7 +74,6 @@ export const eras = [
         platform: 'Nintendo 64',
         summary:
           'Link travels back and forth across seven years to stop Ganondorf from taking the Triforce. Its ending can play out three ways, and each one starts its own branch of the timeline.',
-        pivot: true,
       },
     ],
   },
