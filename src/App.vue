@@ -2,6 +2,8 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useDisplay, useTheme } from 'vuetify'
 import GameEmblem from './components/GameEmblem.vue'
+import RuneField from './components/RuneField.vue'
+import StarField from './components/StarField.vue'
 import { eras, sideStories } from './data/timeline'
 
 const theme = useTheme()
@@ -10,7 +12,11 @@ const { mdAndUp } = useDisplay()
 const activeEraId = ref(eras[0].id)
 const activeEra = computed(() => eras.find((e) => e.id === activeEraId.value))
 const sectionRefs = ref([])
+const heroRef = ref(null)
+// True once the title section has mostly scrolled away; blurs the starry background.
+const pastHero = ref(false)
 let observer
+let heroObserver
 
 // Switch the Vuetify theme to whichever era section crosses the middle of the screen.
 const setEra = (id) => {
@@ -27,9 +33,22 @@ onMounted(() => {
     { rootMargin: '-50% 0px -50% 0px' },
   )
   sectionRefs.value.forEach((el) => observer.observe(el))
+
+  // The root is the bottom half of the screen, so the hero stops intersecting it
+  // once its bottom edge rises past the middle.
+  heroObserver = new IntersectionObserver(
+    ([entry]) => {
+      pastHero.value = !entry.isIntersecting
+    },
+    { rootMargin: '-50% 0px 0px 0px' },
+  )
+  heroObserver.observe(heroRef.value)
 })
 
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  heroObserver?.disconnect()
+})
 
 const scrollTo = (id) =>
   document.getElementById(`era-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -51,6 +70,12 @@ const branches = eras.slice(1, 4)
                        radial-gradient(ellipse at 85% 90%, ${era.colors.secondary}22, transparent 50%)`,
         }"
       />
+    </div>
+
+    <!-- Stars sit behind the drifting patterns; both blur once you're into the timeline. -->
+    <div class="backdrop" :class="{ 'backdrop--blurred': pastHero }" aria-hidden="true">
+      <StarField />
+      <RuneField />
     </div>
 
     <v-app-bar flat density="comfortable" class="app-bar">
@@ -83,7 +108,7 @@ const branches = eras.slice(1, 4)
     </nav>
 
     <v-main>
-      <section class="hero">
+      <section ref="heroRef" class="hero">
         <v-container class="text-center">
           <p class="eyebrow text-secondary">The official chronology</p>
           <h1 class="hero__title">The Legend of Zelda<br />Timeline</h1>
