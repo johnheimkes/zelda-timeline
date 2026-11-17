@@ -1,7 +1,8 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useDisplay, useTheme } from 'vuetify'
-import { mdiChevronDown, mdiMapMarkerPath } from '@mdi/js'
+import { mdiArrowUp, mdiChevronDown, mdiMapMarkerPath } from '@mdi/js'
+import BranchMark from './components/BranchMark.vue'
 import GameEmblem from './components/GameEmblem.vue'
 import RuneField from './components/RuneField.vue'
 import StarField from './components/StarField.vue'
@@ -56,10 +57,30 @@ onBeforeUnmount(() => {
   heroObserver?.disconnect()
 })
 
+// Jump instead of animating when the visitor prefers reduced motion.
+const scrollBehavior = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+
 const scrollTo = (id) =>
-  document.getElementById(`era-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  document.getElementById(`era-${id}`)?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
 
 const branches = eras.slice(1, 4)
+const branchIds = new Set(branches.map((b) => b.id))
+// The "Choose a path" shortcut only makes sense while reading one of the three branches.
+const inBranch = computed(() => pastHero.value && branchIds.has(activeEraId.value))
+
+// Both shortcuts move keyboard focus to where they land, since the button that was
+// clicked fades away once you get there.
+const heroTitleRef = ref(null)
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: scrollBehavior() })
+  heroTitleRef.value?.focus({ preventScroll: true })
+}
+const scrollToSplit = () => {
+  const split = document.getElementById('split')
+  split?.scrollIntoView({ behavior: scrollBehavior(), block: 'center' })
+  split?.querySelector('.split__card')?.focus({ preventScroll: true })
+}
 </script>
 
 <template>
@@ -117,11 +138,41 @@ const branches = eras.slice(1, 4)
       </button>
     </nav>
 
+    <!-- Floating shortcuts, shown once you're past the title. -->
+    <nav class="quick-nav" aria-label="Page shortcuts">
+      <v-fade-transition>
+        <v-btn
+          v-if="inBranch"
+          class="quick-nav__btn"
+          rounded="pill"
+          variant="elevated"
+          color="surface"
+          :icon="!mdAndUp"
+          :aria-label="mdAndUp ? undefined : 'Choose a path'"
+          @click="scrollToSplit"
+        >
+          <BranchMark class="quick-nav__mark" />
+          <span v-if="mdAndUp" class="ml-2">Choose a path</span>
+        </v-btn>
+      </v-fade-transition>
+      <v-fade-transition>
+        <v-btn
+          v-if="pastHero"
+          class="quick-nav__btn"
+          :icon="mdiArrowUp"
+          variant="elevated"
+          color="surface"
+          aria-label="Back to top"
+          @click="scrollToTop"
+        />
+      </v-fade-transition>
+    </nav>
+
     <v-main>
       <section ref="heroRef" class="hero">
         <v-container class="text-center">
           <p class="eyebrow text-secondary">The official chronology</p>
-          <h1 class="hero__title">The Legend of Zelda<br />Timeline</h1>
+          <h1 ref="heroTitleRef" class="hero__title" tabindex="-1">The Legend of Zelda<br />Timeline</h1>
           <p class="hero__lede">
             From the skies of Skyloft to the floating islands of Tears of the Kingdom. One story,
             split into three after Ocarina of Time. Scroll to follow it from the beginning.
@@ -202,20 +253,8 @@ const branches = eras.slice(1, 4)
           </v-timeline>
 
           <!-- The split after Ocarina of Time. -->
-          <div v-if="era.id === 'myth'" class="split">
-            <!-- The site's three-way branch mark (same as the favicon), one color per branch. -->
-            <svg class="split__icon" viewBox="0 0 64 64" aria-hidden="true">
-              <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M32 36 C32 26 16 26 16 14" stroke="#7bd36a" />
-                <path d="M32 36 V12" stroke="#b48cf2" />
-                <path d="M32 36 C32 26 48 26 48 14" stroke="#4fc3f7" />
-                <path d="M32 58 V36" stroke="#f0cc6b" />
-              </g>
-              <circle cx="16" cy="12" r="4.5" fill="#7bd36a" />
-              <circle cx="32" cy="10" r="4.5" fill="#b48cf2" />
-              <circle cx="48" cy="12" r="4.5" fill="#4fc3f7" />
-              <circle cx="32" cy="36" r="5" fill="#f0cc6b" />
-            </svg>
+          <div v-if="era.id === 'myth'" id="split" class="split">
+            <BranchMark class="split__icon" />
             <h3 class="split__title">The timeline splits into three</h3>
             <p class="split__hint">Choose a path to follow its story</p>
             <v-row class="mt-2" justify="center">
