@@ -1,6 +1,6 @@
 // Each era maps to a Vuetify theme of the same id (see src/plugins/vuetify.js).
-// Games can show a custom image by dropping a file at public/images/<slug>.jpg;
-// otherwise an original era-themed emblem is drawn in its place.
+// Each game's card art is an original scene in GameEmblem.vue, keyed by slug.
+// A file at src/assets/games/<slug>.(jpg|png|webp) replaces it.
 
 export const eras = [
   {
@@ -22,7 +22,6 @@ export const eras = [
         title: 'Skyward Sword',
         year: 2011,
         platform: 'Wii',
-        motif: 'clouds',
         summary:
           'Above the clouds on the floating island of Skyloft, a young knight follows his friend to the surface below. The goddess Hylia, the demon king Demise and the forging of the Master Sword set up the cycle that every later game repeats.',
       },
@@ -31,7 +30,6 @@ export const eras = [
         title: 'The Minish Cap',
         year: 2004,
         platform: 'Game Boy Advance',
-        motif: 'leaf',
         summary:
           'A talking cap lets Link shrink down to the size of the tiny Minish folk. He stops the sorcerer Vaati and learns where the Picori Blade came from, before it became the Four Sword.',
       },
@@ -40,7 +38,6 @@ export const eras = [
         title: 'Four Swords',
         year: 2002,
         platform: 'Game Boy Advance',
-        motif: 'split',
         summary:
           'Vaati breaks free and Link draws the Four Sword, which splits him into four copies. It is a cooperative multiplayer adventure about sealing the wind sorcerer away again.',
       },
@@ -49,7 +46,6 @@ export const eras = [
         title: 'Ocarina of Time',
         year: 1998,
         platform: 'Nintendo 64',
-        motif: 'hourglass',
         summary:
           'Link travels back and forth across seven years to stop Ganondorf from taking the Triforce. Its ending can play out three ways, and each one starts its own branch of the timeline.',
         pivot: true,
@@ -75,7 +71,6 @@ export const eras = [
         title: 'A Link to the Past',
         year: 1991,
         platform: 'Super Nintendo',
-        motif: 'mirror',
         summary:
           'The wizard Agahnim is trying to break the seal on the Sacred Realm, which Ganon has twisted into the Dark World. Link moves between the Light and Dark Worlds to stop him.',
       },
@@ -84,7 +79,6 @@ export const eras = [
         title: 'Oracle of Seasons & Ages',
         year: 2001,
         platform: 'Game Boy Color',
-        motif: 'seasons',
         summary:
           'Two linked adventures in Holodrum and Labrynna. In one, Link controls the seasons to rescue the Oracle Din. In the other, he travels through time to save the Oracle Nayru.',
       },
@@ -93,7 +87,6 @@ export const eras = [
         title: "Link's Awakening",
         year: 1993,
         platform: 'Game Boy',
-        motif: 'egg',
         summary:
           'After a shipwreck, Link washes up on Koholint Island, where the only way off is to wake the Wind Fish sleeping in a giant egg. It is a strange, dreamlike story with a bittersweet ending.',
       },
@@ -102,7 +95,6 @@ export const eras = [
         title: 'A Link Between Worlds',
         year: 2013,
         platform: 'Nintendo 3DS',
-        motif: 'mirror',
         summary:
           "Generations later, the sorcerer Yuga traps Hyrule's sages in paintings. Link learns to merge into walls as a drawing and travels to Lorule, a dark mirror of Hyrule.",
       },
@@ -111,7 +103,6 @@ export const eras = [
         title: 'Tri Force Heroes',
         year: 2015,
         platform: 'Nintendo 3DS',
-        motif: 'split',
         summary:
           "Three heroes stack into totems to lift a fashion curse placed on Princess Styla of Hytopia. It is a light-hearted co-op side story that's mostly about outfits.",
       },
@@ -120,7 +111,6 @@ export const eras = [
         title: 'Echoes of Wisdom',
         year: 2024,
         platform: 'Nintendo Switch',
-        motif: 'rift',
         summary:
           'Rifts are swallowing Hyrule and Link has gone missing, so Princess Zelda takes the lead. She copies objects and monsters as "echoes" and uses them to solve problems her own way.',
       },
@@ -129,7 +119,6 @@ export const eras = [
         title: 'The Legend of Zelda',
         year: 1986,
         platform: 'NES',
-        motif: 'mountains',
         summary:
           'This is where the series began. Hyrule has fallen into ruin, and Link explores an open overworld and its dungeons to collect the scattered Triforce of Wisdom and defeat Ganon.',
       },
@@ -138,7 +127,6 @@ export const eras = [
         title: 'Zelda II: The Adventure of Link',
         year: 1987,
         platform: 'NES',
-        motif: 'sword',
         summary:
           'Ganon’s followers want Link’s blood to revive their master. Link explores side-scrolling palaces, levels up and wakes a princess Zelda who has been asleep for generations.',
       },
@@ -163,7 +151,6 @@ export const eras = [
         title: "Majora's Mask",
         year: 2000,
         platform: 'Nintendo 64',
-        motif: 'moon',
         summary:
           'In the parallel land of Termina, a falling moon will destroy everything in three days. Link replays those three days again and again, helping the townsfolk with their troubles and collecting masks.',
       },
@@ -172,7 +159,6 @@ export const eras = [
         title: 'Twilight Princess',
         year: 2006,
         platform: 'GameCube / Wii',
-        motif: 'twilight',
         summary:
           'Twilight spreads over Hyrule and Link turns into a wolf inside it. With the imp Midna’s help he fights the usurper Zant, and behind Zant, Ganondorf.',
       },
@@ -181,7 +167,6 @@ export const eras = [
         title: 'Four Swords Adventures',
         year: 2004,
         platform: 'GameCube',
-        motif: 'split',
         summary:
           'A new Ganon is born and Vaati gets loose again. Four Links, split by the Four Sword, work together to rescue the shrine maidens and seal the evil away.',
       },
@@ -206,7 +191,6 @@ export const eras = [
         title: 'The Wind Waker',
         year: 2002,
         platform: 'GameCube',
-        motif: 'waves',
         summary:
           'Centuries after the flood, a boy from Outset Island sets sail to rescue his sister. Using a baton that controls the wind, he crosses the Great Sea and discovers the drowned kingdom beneath it.',
       },
@@ -215,7 +199,6 @@ export const eras = [
         title: 'Phantom Hourglass',
         year: 2007,
         platform: 'Nintendo DS',
-        motif: 'hourglass',
         summary:
           'A ghost ship takes Tetra, and Link chases it across a new sea. He returns again and again to a timed temple and steers with a stylus-drawn map.',
       },
@@ -224,7 +207,6 @@ export const eras = [
         title: 'Spirit Tracks',
         year: 2009,
         platform: 'Nintendo DS',
-        motif: 'tracks',
         summary:
           'A century later, a new Hyrule is crossed by railways. An apprentice train engineer and the spirit of Princess Zelda team up to restore the tracks that seal away the Demon King.',
       },
@@ -249,7 +231,6 @@ export const eras = [
         title: 'Breath of the Wild',
         year: 2017,
         platform: 'Switch / Wii U',
-        motif: 'sun',
         summary:
           'Link wakes after a hundred years of sleep to find Hyrule in ruins after the Calamity. He climbs, glides and explores freely, gathering his lost memories before facing Calamity Ganon.',
       },
@@ -258,7 +239,6 @@ export const eras = [
         title: 'Tears of the Kingdom',
         year: 2023,
         platform: 'Nintendo Switch',
-        motif: 'islands',
         summary:
           'Ganondorf wakes up beneath Hyrule Castle, islands rise into the sky and a vast dark Depths opens below. Link uses ancient Zonai abilities to build machines and uncover the story of Hyrule’s founding.',
       },
