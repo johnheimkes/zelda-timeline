@@ -42,6 +42,9 @@ onMounted(() => {
   heroObserver = new IntersectionObserver(
     ([entry]) => {
       pastHero.value = !entry.isIntersecting
+      // Back at the title, always show the first era's colors. A jump to the top
+      // (Home key, fast scroll) can skip every section, leaving a later era's theme.
+      if (entry.isIntersecting) setEra(eras[0].id)
     },
     { rootMargin: '-50% 0px 0px 0px' },
   )
