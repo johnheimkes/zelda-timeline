@@ -157,7 +157,8 @@ const branches = eras.slice(1, 4)
           <div v-if="era.id === 'myth'" class="split">
             <v-icon icon="mdi-source-branch" size="40" color="secondary" />
             <h3 class="split__title">The timeline splits into three</h3>
-            <v-row class="mt-4" justify="center">
+            <p class="split__hint">Choose a path to follow its story</p>
+            <v-row class="mt-2" justify="center">
               <v-col v-for="b in branches" :key="b.id" cols="12" sm="4">
                 <v-card
                   variant="outlined"
