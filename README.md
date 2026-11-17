@@ -44,7 +44,7 @@ Then open <http://localhost:5173>.
 ```
 src/
   App.vue                  Page layout, timeline and scroll-driven theme switching
-  components/GameEmblem.vue  Artwork shown on each game card
+  components/GameEmblem.vue  Illustrated scene shown on each game card
   data/timeline.js         Eras, color palettes and game summaries
   plugins/vuetify.js       Builds one Vuetify theme per era
   styles.css               Fonts, transitions and layout styles
@@ -55,7 +55,7 @@ To add or edit a game, change `src/data/timeline.js`. Each era's `colors` object
 
 ## Game artwork
 
-Each game card shows original abstract artwork drawn in its era's colors. To use your own image instead, add a file to `src/assets/games/` named after the game's `slug` from `timeline.js`:
+Each game card shows an original illustrated scene that evokes the game, drawn as inline SVG in `src/components/GameEmblem.vue`. The scenes are landscapes and objects only; they don't depict any Nintendo characters or logos. To use your own image instead, add a file to `src/assets/games/` named after the game's `slug` from `timeline.js`:
 
 ```
 src/assets/games/ocarina-of-time.jpg
