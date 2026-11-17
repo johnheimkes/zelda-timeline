@@ -45,38 +45,9 @@ Then open <http://localhost:5173>.
 
 ## Deploying
 
-**Every push to `main` deploys automatically.** The GitHub Actions workflow in `.github/workflows/deploy.yml` builds the site on Node 24 and syncs it to `/var/www/zelda-timeline` on the droplet. It reads these repository secrets:
+Every push to `main` deploys the site automatically through GitHub Actions (`.github/workflows/deploy.yml`). Pull requests, including Dependabot's weekly update pull requests, are built first by `.github/workflows/build.yml`, so merge only after the build passes. To redeploy without a code change, open the **Actions** tab, choose **Deploy**, then **Run workflow**.
 
-| Secret | Holds |
-| --- | --- |
-| `DEPLOY_SSH_KEY` | A dedicated deploy key that the droplet restricts to the site folder with `rrsync` |
-| `DEPLOY_HOST` | The droplet's address |
-| `DEPLOY_USER` | The droplet's deploy user, `deploy` (see below) |
-| `DEPLOY_KNOWN_HOSTS` | The droplet's pinned SSH host key line, so the workflow only connects to the real server |
-
-**Every pull request is built first.** `.github/workflows/build.yml` runs `npm ci` and `npm run build` on each pull request, including Dependabot's, without deploying or touching any secrets. `.github/dependabot.yml` opens weekly update pull requests for npm packages and GitHub Actions, grouping minor and patch updates. Both workflows pin their actions to exact commits, which Dependabot keeps current. Merge a pull request only after its build passes, since merging to `main` deploys.
-
-**To redeploy without a code change,** open the repo's **Actions** tab, choose **Deploy**, then **Run workflow**.
-
-### The deploy user
-
-Deploys log in as a dedicated `deploy` user on the droplet. It has no password and no sudo, and it can't open a shell: every key it accepts is forced to run `rrsync`, locked to one site folder. Each project gets its own key in `/home/deploy/.ssh/authorized_keys`, so a leaked key can only ever write to its own project's folder:
-
-```
-command="/usr/bin/rrsync -wo /var/www/zelda-timeline",restrict ssh-ed25519 AAAA... github-actions-deploy@zelda-timeline
-```
-
-To deploy another project to the droplet the same way:
-
-1. Create its folder, owned by `deploy`: `sudo install -d -o deploy -g www-data -m 755 /var/www/<project>`
-2. Generate a key just for that project: `ssh-keygen -t ed25519 -N "" -C "github-actions-deploy@<project>" -f <project>_deploy_key`
-3. Append the public key to `/home/deploy/.ssh/authorized_keys` with its own `command="/usr/bin/rrsync -wo /var/www/<project>",restrict` prefix.
-4. Store the private key as that repository's `DEPLOY_SSH_KEY` secret, then delete the local copy.
-
-The Apache configuration for the site lives in `deploy/apache/`:
-
-- `zelda.heimk.es.conf` is the virtual host. certbot manages the matching HTTPS virtual host on the server.
-- `zelda-timeline-cache.conf` sets caching headers: a year for the hashed files in `/assets/`, a day for icons, images and fonts, and a fresh check for `index.html` so deploys show up right away.
+The site's Apache configuration lives in `deploy/apache/`.
 
 ## Project structure
 

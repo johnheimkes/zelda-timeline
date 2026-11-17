@@ -5,3 +5,6 @@ dist/
 
 # Local Claude Code session config
 .claude/
+
+# Private notes kept out of the public repo
+*.local.md
