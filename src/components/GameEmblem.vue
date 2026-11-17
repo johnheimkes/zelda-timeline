@@ -269,16 +269,17 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
           :fill="col"
           opacity="0.35"
         />
-        <path :d="hills(182, 8, 60, 0)" fill="#0e1b14" />
-        <rect x="120" y="120" width="12" height="62" fill="#4b545e" />
-        <rect x="268" y="120" width="12" height="62" fill="#4b545e" />
+        <!-- Pillars and steps run down into the ground; the hill is drawn over their bases. -->
+        <rect x="120" y="120" width="12" height="92" fill="#4b545e" />
+        <rect x="268" y="120" width="12" height="92" fill="#4b545e" />
         <rect x="116" y="114" width="20" height="7" fill="#5d6670" />
         <rect x="264" y="114" width="20" height="7" fill="#5d6670" />
-        <rect x="158" y="172" width="84" height="12" fill="#5d6670" />
+        <rect x="158" y="172" width="84" height="42" fill="#5d6670" />
         <rect x="170" y="161" width="60" height="11" fill="#6f7882" />
         <rect x="188" y="134" width="24" height="27" fill="#7d8893" />
         <rect x="182" y="128" width="36" height="7" fill="#909ba6" />
         <ellipse cx="200" cy="128" rx="18" ry="5" fill="#fff" opacity="0.5" :filter="url('glow')" />
+        <path :d="hills(182, 8, 60, 0)" fill="#0e1b14" />
         <circle v-for="(s, i) in stars.slice(0, 14)" :key="`sp-${i}`" :cx="150 + s.x / 4" :cy="60 + s.y / 2" r="1.5" :fill="colors.secondary" :opacity="s.o" />
       </template>
 
@@ -334,12 +335,14 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
         >
           <rect width="400" height="113" :fill="world.sky" />
           <path :d="hills(88, 10, 50, 0.4, 113)" :fill="world.h1" />
-          <rect x="174" y="62" width="52" height="28" :fill="world.castle" />
-          <rect x="166" y="50" width="13" height="40" :fill="world.castle" />
-          <rect x="221" y="50" width="13" height="40" :fill="world.castle" />
+          <!-- A rise under the castle so its walls stand on the hill. -->
+          <path d="M136 113 Q146 88 200 88 Q254 88 264 113 Z" :fill="world.h1" />
+          <rect x="174" y="62" width="52" height="34" :fill="world.castle" />
+          <rect x="166" y="50" width="13" height="46" :fill="world.castle" />
+          <rect x="221" y="50" width="13" height="46" :fill="world.castle" />
           <rect x="193" y="38" width="14" height="28" :fill="world.castle" />
           <path d="M164 51 L172.5 38 L181 51 Z M219 51 L227.5 38 L236 51 Z M191 39 L200 24 L209 39 Z" :fill="world.roof" />
-          <path d="M194 90 L194 78 Q200 72 206 78 L206 90 Z" :fill="world.roof" />
+          <path d="M194 92 L194 80 Q200 74 206 80 L206 92 Z" :fill="world.roof" />
           <path :d="hills(100, 6, 35, 2, 113)" :fill="world.h2" />
           <circle cx="70" cy="92" r="9" :fill="world.h2" />
           <circle cx="330" cy="94" r="11" :fill="world.h2" />
@@ -622,13 +625,15 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
         </defs>
         <rect width="400" height="225" :fill="url('dawn')" />
         <path :d="hills(150, 14, 60, 0.8)" fill="#3b2f5a" />
-        <rect x="150" y="96" width="100" height="58" fill="#20183a" />
-        <rect v-for="(x, i) in [140, 176, 212, 248]" :key="`tw-${i}`" :x="x" :y="80 - (i % 3 === 0 ? 0 : 14)" width="14" height="74" fill="#20183a" />
+        <!-- A broad rise under the castle so its walls stand on the land. -->
+        <path d="M100 225 L100 166 Q118 152 160 152 L240 152 Q282 152 300 166 L300 225 Z" fill="#3b2f5a" />
+        <rect x="150" y="96" width="100" height="62" fill="#20183a" />
+        <rect v-for="(x, i) in [140, 176, 212, 248]" :key="`tw-${i}`" :x="x" :y="80 - (i % 3 === 0 ? 0 : 14)" width="14" :height="78 + (i % 3 === 0 ? 0 : 14)" fill="#20183a" />
         <g v-for="(col, i) in ['#66d36e', '#ef5350', '#5c9cff', '#b48cf2']" :key="col">
           <path :d="`M${147 + i * 36} ${80 - (i % 3 === 0 ? 0 : 14)} L${147 + i * 36} ${58 - (i % 3 === 0 ? 0 : 14)}`" stroke="#e9dcc3" stroke-width="1.5" />
           <path :d="`M${148 + i * 36} ${58 - (i % 3 === 0 ? 0 : 14)} l18 5 l-18 6 Z`" :fill="col" />
         </g>
-        <path d="M188 154 L188 136 Q200 126 212 136 L212 154 Z" :fill="colors.secondary" opacity="0.6" />
+        <path d="M188 158 L188 138 Q200 128 212 138 L212 158 Z" :fill="colors.secondary" opacity="0.6" />
         <path :d="hills(180, 10, 45, 2.2)" fill="#2a2142" />
         <path d="M200 156 Q170 180 230 196 Q260 206 210 225" stroke="#c9b48a" stroke-width="7" fill="none" opacity="0.7" />
       </template>
@@ -718,17 +723,21 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
         <path :d="hills(178, 8, 40, 1.8)" fill="#3f7a4a" />
         <path v-for="(tie, i) in railTies" :key="`tie-${i}`" :d="tie.d" stroke="#6b4a2f" :stroke-width="tie.w" />
         <path d="M40 225 Q180 160 300 150 M100 225 Q210 168 306 152" stroke="#9aa3ad" stroke-width="2.5" fill="none" />
-        <circle v-for="(p, i) in [[122, 140, 8], [110, 126, 10], [94, 108, 13], [74, 88, 15]]" :key="`smoke-${i}`" :cx="p[0]" :cy="p[1]" :r="p[2]" fill="#fff" :opacity="0.8 - i * 0.16" />
-        <path d="M104 188 L110 172 L110 188 Z" fill="#8a2a2a" />
-        <rect x="110" y="168" width="52" height="20" rx="8" fill="#2a3a4a" />
-        <rect x="116" y="150" width="9" height="20" fill="#2a3a4a" />
-        <rect x="114" y="148" width="13" height="4" :fill="colors.secondary" />
-        <rect x="158" y="152" width="26" height="36" rx="2" fill="#8a2a2a" />
-        <rect x="163" y="158" width="16" height="11" rx="2" fill="#f6e2a8" />
-        <rect x="155" y="148" width="32" height="5" fill="#2a3a4a" />
-        <g v-for="x in [124, 144, 172]" :key="`w-${x}`">
-          <circle :cx="x" cy="190" r="7" fill="#151515" :stroke="colors.secondary" stroke-width="1.5" />
-          <circle :cx="x" cy="190" r="2" :fill="colors.secondary" />
+        <!-- The train sits on the track's centerline, angled to follow it toward the tower.
+             Local coordinates: y = 0 is the track, +x points toward the tower. -->
+        <g transform="translate(167 184) rotate(-20)">
+          <circle v-for="(p, i) in [[16, -60, 8], [2, -74, 10], [-16, -90, 13], [-38, -104, 15]]" :key="`smoke-${i}`" :cx="p[0]" :cy="p[1]" :r="p[2]" fill="#fff" :opacity="0.8 - i * 0.16" />
+          <rect x="-40" y="-42" width="26" height="36" rx="2" fill="#8a2a2a" />
+          <rect x="-35" y="-36" width="16" height="11" rx="2" fill="#f6e2a8" />
+          <rect x="-43" y="-46" width="32" height="5" fill="#2a3a4a" />
+          <rect x="-16" y="-28" width="54" height="20" rx="8" fill="#2a3a4a" />
+          <rect x="22" y="-46" width="9" height="20" fill="#2a3a4a" />
+          <rect x="20" y="-48" width="13" height="4" :fill="colors.secondary" />
+          <path d="M36 -16 L48 -2 L36 -2 Z" fill="#8a2a2a" />
+          <g v-for="x in [-30, -4, 24]" :key="`w-${x}`">
+            <circle :cx="x" cy="-7" r="7" fill="#151515" :stroke="colors.secondary" stroke-width="1.5" />
+            <circle :cx="x" cy="-7" r="2" :fill="colors.secondary" />
+          </g>
         </g>
       </template>
 
@@ -745,10 +754,11 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
         <circle cx="306" cy="146" r="34" fill="#fff2c9" opacity="0.3" />
         <circle cx="306" cy="146" r="20" fill="#fff2c9" />
         <path :d="hills(122, 24, 60, 1)" fill="#4f6f8a" opacity="0.85" />
+        <!-- The walls run down behind the nearer ridge (drawn below), so the castle stands on it. -->
         <g fill="#2a2a3a">
-          <rect x="186" y="104" width="30" height="22" />
-          <rect x="180" y="94" width="8" height="32" />
-          <rect x="214" y="94" width="8" height="32" />
+          <rect x="186" y="104" width="30" height="38" />
+          <rect x="180" y="94" width="8" height="48" />
+          <rect x="214" y="94" width="8" height="48" />
           <rect x="197" y="82" width="8" height="24" />
           <path d="M197 83 L201 72 L205 83 Z" />
         </g>
@@ -794,8 +804,19 @@ const seasonColors = ['#f2a7c3', '#5fbf5a', '#e08a3c', '#eaf3fb']
           />
           <path :d="islandTop(isle[0], isle[1], isle[2])" fill="#6fbf8a" />
         </g>
-        <rect x="186" y="44" width="16" height="22" fill="#9aa8a0" />
-        <path d="M182 46 L194 34 L206 46 Z" :fill="colors.primary" />
+        <!-- A small castle standing on the big island. -->
+        <g fill="#c4cfca">
+          <rect x="172" y="46" width="12" height="22" />
+          <rect x="216" y="46" width="12" height="22" />
+          <rect x="185" y="38" width="30" height="30" />
+          <rect v-for="i in 5" :key="`crenel-${i}`" :x="185 + (i - 1) * 6.75" y="34" width="3.5" height="5" />
+          <rect x="195" y="24" width="10" height="15" />
+        </g>
+        <path d="M170 47 L178 35 L186 47 Z M214 47 L222 35 L230 47 Z M193 25 L200 12 L207 25 Z" :fill="colors.primary" />
+        <path d="M196 68 L196 59 Q200 54 204 59 L204 68 Z" fill="#2c3a3a" />
+        <rect x="176.5" y="52" width="3" height="5" fill="#2c3a3a" />
+        <rect x="220.5" y="52" width="3" height="5" fill="#2c3a3a" />
+        <rect x="198.5" y="29" width="3" height="5" fill="#2c3a3a" />
         <path :d="hills(186, 6, 60, 0)" fill="#2f5a40" />
         <ellipse cx="200" cy="200" rx="90" ry="26" :fill="url('depths')" />
         <ellipse cx="200" cy="200" rx="48" ry="10" fill="#120508" />
