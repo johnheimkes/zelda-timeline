@@ -182,6 +182,13 @@ body {
   margin-top: 0.5rem;
 }
 
+.split__hint {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
 /* Equal-height buttons whose titles wrap to different line counts, so center the text. */
 .split__card {
   cursor: pointer;
