@@ -42,7 +42,6 @@ Then open <http://localhost:5173>.
 | `npm run build` | Builds the site into `dist/` |
 | `npm run preview` | Serves the production build locally |
 | `npm run icons` | Re-renders the favicon PNGs and link-preview image (macOS only) |
-| `npm run deploy` | Builds and uploads the site from your machine (manual fallback, see below) |
 
 ## Deploying
 
@@ -52,17 +51,27 @@ Then open <http://localhost:5173>.
 | --- | --- |
 | `DEPLOY_SSH_KEY` | A dedicated deploy key that the droplet restricts to the site folder with `rrsync` |
 | `DEPLOY_HOST` | The droplet's address |
-| `DEPLOY_USER` | The SSH login the deploy key belongs to |
+| `DEPLOY_USER` | The droplet's deploy user, `deploy` (see below) |
 | `DEPLOY_KNOWN_HOSTS` | The droplet's pinned SSH host key line, so the workflow only connects to the real server |
 
 **Every pull request is built first.** `.github/workflows/build.yml` runs `npm ci` and `npm run build` on each pull request, including Dependabot's, without deploying or touching any secrets. `.github/dependabot.yml` opens weekly update pull requests for npm packages and GitHub Actions, grouping minor and patch updates. Both workflows pin their actions to exact commits, which Dependabot keeps current. Merge a pull request only after its build passes, since merging to `main` deploys.
 
-`npm run deploy` uploads whatever is on your machine, including uncommitted changes, and overwrites what GitHub deployed. Keep it as a manual fallback for when the workflow can't run. It reads `DEPLOY_USER` and `DEPLOY_HOST` from the environment or from a `deploy.env.local` file in the project root, which git ignores:
+**To redeploy without a code change,** open the repo's **Actions** tab, choose **Deploy**, then **Run workflow**.
 
-```bash
-DEPLOY_USER=your-login
-DEPLOY_HOST=your-server-address
+### The deploy user
+
+Deploys log in as a dedicated `deploy` user on the droplet. It has no password and no sudo, and it can't open a shell: every key it accepts is forced to run `rrsync`, locked to one site folder. Each project gets its own key in `/home/deploy/.ssh/authorized_keys`, so a leaked key can only ever write to its own project's folder:
+
 ```
+command="/usr/bin/rrsync -wo /var/www/zelda-timeline",restrict ssh-ed25519 AAAA... github-actions-deploy@zelda-timeline
+```
+
+To deploy another project to the droplet the same way:
+
+1. Create its folder, owned by `deploy`: `sudo install -d -o deploy -g www-data -m 755 /var/www/<project>`
+2. Generate a key just for that project: `ssh-keygen -t ed25519 -N "" -C "github-actions-deploy@<project>" -f <project>_deploy_key`
+3. Append the public key to `/home/deploy/.ssh/authorized_keys` with its own `command="/usr/bin/rrsync -wo /var/www/<project>",restrict` prefix.
+4. Store the private key as that repository's `DEPLOY_SSH_KEY` secret, then delete the local copy.
 
 The Apache configuration for the site lives in `deploy/apache/`:
 
@@ -82,7 +91,6 @@ src/
   styles.css                  Fonts, transitions and layout styles
 public/                       Favicons, link-preview image and the Hylia Serif font
 scripts/render-icons.mjs      Renders the favicon PNGs and link-preview image
-scripts/deploy.sh             Manual build-and-upload fallback
 deploy/apache/                Apache configuration for the droplet
 ```
 
