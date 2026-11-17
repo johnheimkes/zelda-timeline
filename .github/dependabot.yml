@@ -1,5 +1,7 @@
 # Weekly version updates. Minor and patch updates are grouped into one pull request per
 # ecosystem; major updates arrive separately so they can be checked on their own.
+# Major versions of Vue, Vuetify and Vite are skipped entirely: a passing build doesn't
+# prove the page still looks and works right, so upgrade those by hand when you choose.
 # Each pull request is built by .github/workflows/build.yml before it can be merged,
 # and merging to main deploys.
 version: 2
@@ -9,6 +11,13 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: vue
+        update-types: ["version-update:semver-major"]
+      - dependency-name: vuetify
+        update-types: ["version-update:semver-major"]
+      - dependency-name: vite
+        update-types: ["version-update:semver-major"]
     groups:
       npm-minor-and-patch:
         update-types: [minor, patch]
