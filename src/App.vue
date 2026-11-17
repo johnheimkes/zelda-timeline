@@ -14,7 +14,8 @@ const activeEraId = ref(eras[0].id)
 const activeEra = computed(() => eras.find((e) => e.id === activeEraId.value))
 const sectionRefs = ref([])
 const heroRef = ref(null)
-// True once the title section has mostly scrolled away; blurs the starry background.
+// True once the title section has mostly scrolled away. It blurs the starry background and
+// shows the current-era indicators, which stay hidden while you're still at the title.
 const pastHero = ref(false)
 let observer
 let heroObserver
@@ -83,14 +84,17 @@ const branches = eras.slice(1, 4)
     <v-app-bar flat density="comfortable" class="app-bar">
       <v-app-bar-title class="brand">Hyrule Chronicle</v-app-bar-title>
       <template #append>
-        <v-chip
-          color="primary"
-          variant="tonal"
-          class="mr-2 era-chip"
-          :prepend-icon="mdiMapMarkerPath"
-        >
-          {{ activeEra.title }}
-        </v-chip>
+        <v-fade-transition>
+          <v-chip
+            v-if="pastHero"
+            color="primary"
+            variant="tonal"
+            class="mr-2 era-chip"
+            :prepend-icon="mdiMapMarkerPath"
+          >
+            {{ activeEra.title }}
+          </v-chip>
+        </v-fade-transition>
       </template>
     </v-app-bar>
 
@@ -100,7 +104,8 @@ const branches = eras.slice(1, 4)
         v-for="era in eras"
         :key="era.id"
         class="era-nav__item"
-        :class="{ 'era-nav__item--on': era.id === activeEraId }"
+        :class="{ 'era-nav__item--on': pastHero && era.id === activeEraId }"
+        :aria-current="pastHero && era.id === activeEraId ? 'true' : undefined"
         :style="{ '--dot': era.colors.primary }"
         @click="scrollTo(era.id)"
       >
