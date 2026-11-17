@@ -66,8 +66,10 @@ src/assets/games/tears-of-the-kingdom.webp
 
 ## Fonts
 
-- **Headings:** Hylia Serif (Beta v0.009), a fan-made font from [Zelda Universe](https://zeldauniverse.net/media/fonts/). Falls back to [Cinzel](https://fonts.google.com/specimen/Cinzel) while loading.
+- **Headings:** [Hylia Serif](https://artsyomni.com/hyliaserif) (Beta v0.009) by Omni Jacala of Artsy Omni. Falls back to [Cinzel](https://fonts.google.com/specimen/Cinzel) while loading.
 - **Body text:** [Inter](https://fonts.google.com/specimen/Inter).
+
+Hylia Serif is free to use and download from its [official site](https://artsyomni.com/hyliaserif), and may not be distributed for profit. It's included in `public/fonts/` for convenience; the official site has the latest version. Hylia Serif is a fan-made approximation of the font from *Breath of the Wild* and is not affiliated with Nintendo.
 
 ## Disclaimer
 
