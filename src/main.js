@@ -5,5 +5,6 @@ import '@fontsource/inter/500.css'
 import '@fontsource/inter/600.css'
 import './styles.css'
 
-// #app already holds the prerendered page; mounting replaces it with the live app.
+// #app already holds the prerendered page. Mounting hydrates it, attaching the app to the
+// existing elements rather than rebuilding them, so nothing is redrawn as the app takes over.
 createSiteApp().app.mount('#app')

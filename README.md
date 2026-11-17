@@ -55,7 +55,7 @@ The site's Apache configuration lives in `deploy/apache/`.
 src/
   App.vue                     Page layout, timeline, scroll-driven themes and background blur
   app.js                      Creates the app for the browser and for the build-time prerender
-  main.js                     Browser entry: replaces the prerendered page with the live app
+  main.js                     Browser entry: hydrates the prerendered page in place
   entry-server.js             Build-time render of the page (desktop layout)
   components/GameEmblem.vue   Illustrated scene shown on each game card
   components/StarField.vue    Twinkling star background
